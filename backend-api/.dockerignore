@@ -1,0 +1,26 @@
+# ── Secretos — NUNCA en la imagen ────────────────────────────────────
+.env
+*.env
+.env.*
+
+# ── Build artifacts — Maven genera el JAR en la imagen ───────────────
+target/
+
+# ── IDE y herramientas ────────────────────────────────────────────────
+.vscode/
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+
+# ── Git ───────────────────────────────────────────────────────────────
+.git/
+.gitignore
+
+# ── Uploads locales — en prod usa Azure Blob ──────────────────────────
+uploads/
+
+# ── Docs ──────────────────────────────────────────────────────────────
+README.md
+bicep/

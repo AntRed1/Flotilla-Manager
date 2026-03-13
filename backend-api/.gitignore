@@ -1,0 +1,34 @@
+# =====================================================================
+# backend-api/.gitignore
+# =====================================================================
+
+# Secretos
+.env
+.env.*
+!.env.example
+
+# Maven build
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Uploads locales (en prod usa Azure Blob)
+uploads/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+.classpath
+.project
+.settings/
+*.class
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/

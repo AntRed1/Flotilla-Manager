@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>CFBundleDevelopmentRegion</key>
+		<string>es</string>
+		<key>CFBundleDisplayName</key>
+		<string>Flotilla</string>
+		<key>CFBundleExecutable</key>
+		<string>$(EXECUTABLE_NAME)</string>
+		<key>CFBundleIdentifier</key>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+		<key>CFBundleInfoDictionaryVersion</key>
+		<string>6.0</string>
+		<key>CFBundleName</key>
+		<string>$(PRODUCT_NAME)</string>
+		<key>CFBundlePackageType</key>
+		<string>APPL</string>
+		<key>CFBundleShortVersionString</key>
+		<string>$(MARKETING_VERSION)</string>
+		<key>CFBundleVersion</key>
+		<string>$(CURRENT_PROJECT_VERSION)</string>
+
+		<!-- ── Permisos requeridos por Apple ── -->
+		<key>NSCameraUsageDescription</key>
+		<string>Flotilla necesita acceso a la cámara para fotografiar comprobantes de combustible.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Flotilla necesita acceso a tus fotos para adjuntar comprobantes de pago.</string>
+		<key>NSPhotoLibraryAddUsageDescription</key>
+		<string>Flotilla puede guardar fotos de comprobantes en tu galería.</string>
+
+		<!-- ── UI ── -->
+		<key>LSRequiresIPhoneOS</key>
+		<true />
+		<key>UILaunchStoryboardName</key>
+		<string>LaunchScreen</string>
+		<key>UIMainStoryboardFile</key>
+		<string>Main</string>
+		<key>UIRequiredDeviceCapabilities</key>
+		<array>
+			<string>armv7</string>
+		</array>
+
+		<!-- Solo portrait — mejor UX para app de registro de gastos -->
+		<key>UISupportedInterfaceOrientations</key>
+		<array>
+			<string>UIInterfaceOrientationPortrait</string>
+		</array>
+		<key>UISupportedInterfaceOrientations~ipad</key>
+		<array>
+			<string>UIInterfaceOrientationPortrait</string>
+			<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		</array>
+
+		<key>UIViewControllerBasedStatusBarAppearance</key>
+		<true />
+
+		<!-- Permite scroll nativo en WKWebView (Capacitor) -->
+		<key>UIWebViewBounce</key>
+		<false />
+	</dict>
+</plist>
