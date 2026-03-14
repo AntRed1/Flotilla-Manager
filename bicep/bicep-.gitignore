@@ -1,0 +1,15 @@
+# ── Outputs de az CLI ────────────────────────────────────────
+# Algunos comandos az pueden guardar resultados en JSON si los redirigís
+*.json
+*.log
+
+# ── Archivos de parámetros con valores reales ────────────────
+# Bicep permite pasar parámetros en un .bicepparam o .parameters.json
+# Si alguien crea uno con passwords reales, que no suba
+*.parameters.json
+*.bicepparam
+*.env
+
+# ── Archivos temporales ───────────────────────────────────────
+*.tmp
+*.bak

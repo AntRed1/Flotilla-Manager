@@ -1,5 +1,6 @@
 package com.flotilla.manager.security;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,13 +15,16 @@ import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class JwtService {
+
+    private static final String CLAIM_TYPE = "type";
+    private static final String TYPE_ACCESS = "access";
+    private static final String TYPE_REFRESH = "refresh";
 
     @Value("${app.jwt.secret}")
     private String jwtSecret;
@@ -36,13 +40,13 @@ public class JwtService {
     // =============================================
     public String generateAccessToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("type", "access");
+        claims.put(CLAIM_TYPE, TYPE_ACCESS);
         return buildToken(claims, userDetails, accessTokenExpiration);
     }
 
     public String generateRefreshToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("type", "refresh");
+        claims.put(CLAIM_TYPE, TYPE_REFRESH);
         return buildToken(claims, userDetails, refreshTokenExpiration);
     }
 
@@ -59,12 +63,34 @@ public class JwtService {
     // =============================================
     // Token Validation
     // =============================================
+    /**
+     * Valida que el token sea un ACCESS token válido y no expirado. Rechaza
+     * explícitamente refresh tokens para evitar que sean usados como
+     * credenciales en endpoints protegidos.
+     */
     public boolean isTokenValid(String token, UserDetails userDetails) {
         try {
             final String username = extractUsername(token);
-            return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+            final String type = extractClaim(token, claims -> claims.get(CLAIM_TYPE, String.class));
+
+            return username.equals(userDetails.getUsername())
+                    && TYPE_ACCESS.equals(type)
+                    && !isTokenExpired(token);
         } catch (JwtException e) {
             log.warn("JWT validation failed: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Valida específicamente un refresh token (usado en /auth/refresh).
+     */
+    public boolean isRefreshTokenValid(String token) {
+        try {
+            final String type = extractClaim(token, claims -> claims.get(CLAIM_TYPE, String.class));
+            return TYPE_REFRESH.equals(type) && !isTokenExpired(token);
+        } catch (JwtException e) {
+            log.warn("Refresh token validation failed: {}", e.getMessage());
             return false;
         }
     }
@@ -97,10 +123,12 @@ public class JwtService {
                 .getPayload();
     }
 
+    /**
+     * Genera la clave de firma usando los bytes directos del secret. FIX:
+     * eliminado el doble Base64 encoding que producía una clave diferente a la
+     * esperada y debilitaba la firma.
+     */
     private SecretKey getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(
-                java.util.Base64.getEncoder().encodeToString(jwtSecret.getBytes())
-        );
-        return Keys.hmacShaKeyFor(keyBytes);
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 }

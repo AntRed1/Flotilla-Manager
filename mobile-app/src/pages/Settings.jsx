@@ -8,8 +8,9 @@ import { useAuth } from "@/lib/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import CardConfigForm from "@/components/settings/CardConfigForm";
 import StationManager from "@/components/settings/StationManager";
+import DeveloperFooter from "@/components/settings/DeveloperFooter";
 import PullToRefresh from "@/components/shared/PullToRefresh";
-import { LogOut, User } from "lucide-react";
+import { LogOut } from "lucide-react";
 
 // ─── Modal de confirmación de logout ─────────────────────────────────────────
 function LogoutModal({ onConfirm, onCancel, isLoading }) {
@@ -117,14 +118,11 @@ export default function Settings() {
 
           <div className="space-y-6">
 
-            {/* ── Perfil + Logout en una sola card ── */}
+            {/* ── Perfil + Logout ── */}
             <div className="bg-white rounded-2xl shadow-sm p-4 flex items-center gap-3">
-              {/* Avatar con iniciales */}
               <div className="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center flex-shrink-0">
                 <span className="text-white text-sm font-bold tracking-wide">{initials}</span>
               </div>
-
-              {/* Nombre + email */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-semibold text-gray-900 truncate">
@@ -138,8 +136,6 @@ export default function Settings() {
                   {user?.email ?? ""}
                 </p>
               </div>
-
-              {/* Botón logout compacto */}
               <button
                 onClick={() => setShowLogoutModal(true)}
                 className="flex-shrink-0 w-9 h-9 bg-red-50 hover:bg-red-100 active:bg-red-200
@@ -153,6 +149,9 @@ export default function Settings() {
             {/* Configuración de tarjeta y estaciones */}
             <CardConfigForm config={config} onSave={handleRefresh} />
             <StationManager stations={stations} onRefresh={handleRefresh} />
+
+            {/* ── Footer del desarrollador ── */}
+            <DeveloperFooter />
 
           </div>
         </div>

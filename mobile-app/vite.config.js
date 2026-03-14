@@ -5,6 +5,11 @@ import path from 'path'
 export default defineConfig({
   plugins: [react()],
   base: './',
+  define: {
+    // Fecha y hora exacta del momento en que corres `npm run build`
+    __BUILD_DATE__: JSON.stringify(new Date().toISOString()),
+    __APP_VERSION__: JSON.stringify('1.0.0'),
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

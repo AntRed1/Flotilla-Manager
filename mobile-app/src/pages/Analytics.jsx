@@ -1,15 +1,17 @@
 // src/pages/Analytics.jsx
 import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/api/apiClient";
 import { Skeleton } from "@/components/ui/skeleton";
 import CycleComparison from "@/components/analytics/CycleComparison";
 import StationsRanking from "@/components/analytics/StationsRanking";
 import GlobalKPIs from "@/components/analytics/GlobalKPIs";
+import PullToRefresh from "@/components/shared/PullToRefresh";
 import { generateCycleOptions } from "@/utils";
 
 export default function Analytics() {
-  const [selectedCycle, setSelectedCycle] = useState(null); // null = histórico
+  const [selectedCycle, setSelectedCycle] = useState(null);
+  const queryClient = useQueryClient();
 
   const { data: cyclesReport, isLoading: cyclesLoading } = useQuery({
     queryKey: ["analytics", "cycles"],
@@ -26,6 +28,13 @@ export default function Analytics() {
     queryFn: () => apiClient.getAnalyticsSummary(),
   });
 
+  const handleRefresh = () =>
+    Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["analytics", "cycles"] }),
+      queryClient.invalidateQueries({ queryKey: ["analytics", "stations", selectedCycle] }),
+      queryClient.invalidateQueries({ queryKey: ["analytics", "summary"] }),
+    ]);
+
   const isLoading = cyclesLoading || stationsLoading || summaryLoading;
   const cycles = generateCycleOptions(6);
 
@@ -40,27 +49,29 @@ export default function Analytics() {
   }
 
   return (
-    <div className="px-4 pt-2 pb-24 space-y-5">
-      <div className="mb-1">
-        <h1 className="text-2xl font-bold text-gray-900">Análisis</h1>
-        <p className="text-sm text-gray-400 mt-1">Tendencias y comparativas</p>
+    <PullToRefresh onRefresh={handleRefresh}>
+      <div className="px-4 pt-2 pb-24 space-y-5">
+        <div className="mb-1">
+          <h1 className="text-2xl font-bold text-gray-900">Análisis</h1>
+          <p className="text-sm text-gray-400 mt-1">Tendencias y comparativas</p>
+        </div>
+
+        {/* KPIs globales */}
+        <GlobalKPIs summary={summary} />
+
+        {/* Comparativa de ciclos */}
+        {cyclesReport && <CycleComparison data={cyclesReport} />}
+
+        {/* Ranking estaciones */}
+        {stationsReport && (
+          <StationsRanking
+            data={stationsReport}
+            cycles={cycles}
+            selectedCycle={selectedCycle}
+            onCycleChange={setSelectedCycle}
+          />
+        )}
       </div>
-
-      {/* KPIs globales */}
-      <GlobalKPIs summary={summary} />
-
-      {/* Comparativa de ciclos */}
-      {cyclesReport && <CycleComparison data={cyclesReport} />}
-
-      {/* Ranking estaciones */}
-      {stationsReport && (
-        <StationsRanking
-          data={stationsReport}
-          cycles={cycles}
-          selectedCycle={selectedCycle}
-          onCycleChange={setSelectedCycle}
-        />
-      )}
-    </div>
+    </PullToRefresh>
   );
 }
